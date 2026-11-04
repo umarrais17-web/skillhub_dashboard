@@ -2,7 +2,7 @@ window.KWSC_INITIAL_DATA = {
   "schedule": [
     {
       "Day": "Thursday",
-      "Course": "AI / PYTHON",
+      "Course": "AI / Python",
       "Batch": "1st Batch",
       "Time": "3:00 PM - 5:00 PM",
       "Capacity": 12
@@ -16,21 +16,21 @@ window.KWSC_INITIAL_DATA = {
     },
     {
       "Day": "Thursday",
-      "Course": "Digital Recording / Graphics",
+      "Course": "Digital Recording / Graphic Designing",
       "Batch": "1st Batch",
       "Time": "7:00 PM - 9:00 PM",
       "Capacity": 12
     },
     {
       "Day": "Friday",
-      "Course": "Communication Skills / Letter Writing",
+      "Course": "Communication Skills / Official Letter Writing",
       "Batch": "1st Batch",
       "Time": "5:00 PM - 7:00 PM",
       "Capacity": 12
     },
     {
       "Day": "Friday",
-      "Course": "Digital Recording / Graphics",
+      "Course": "Digital Recording / Graphic Designing",
       "Batch": "2nd Batch",
       "Time": "7:00 PM - 9:00 PM",
       "Capacity": 12
@@ -44,23 +44,16 @@ window.KWSC_INITIAL_DATA = {
     },
     {
       "Day": "Saturday",
-      "Course": "AI / PYTHON",
+      "Course": "AI / Python",
       "Batch": "2nd Batch",
       "Time": "6:00 PM - 7:30 PM",
       "Capacity": 12
     },
     {
       "Day": "Saturday",
-      "Course": "AI / PYTHON",
+      "Course": "AI / Python",
       "Batch": "3rd Batch",
       "Time": "7:30 PM - 9:00 PM",
-      "Capacity": 12
-    },
-    {
-      "Day": "Monday",
-      "Course": "AI / PYTHON",
-      "Batch": "4th Batch",
-      "Time": "3:00 PM - 5:00 PM",
       "Capacity": 12
     },
     {

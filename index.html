@@ -162,7 +162,7 @@
                 <span class="kpi-label">Total Batches</span>
                 <span class="kpi-click-hint">View schedule ↗</span>
               </div>
-              <div class="kpi-value" id="kpi-batches">10</div>
+              <div class="kpi-value" id="kpi-batches">9</div>
               <div class="kpi-sub">Across all courses</div>
             </div>
           </div>
@@ -293,7 +293,7 @@
           </div>
         </div>
 
-        <!-- Third Row: Upcoming Training Schedule & Recent Enrollments + Defaulter Alerts -->
+        <!-- Third Row: Upcoming Training Schedule & Recent Enrollments -->
         <div class="dash-row-split">
           <!-- Left: Upcoming Training Schedule -->
           <div class="panel">
@@ -308,7 +308,6 @@
                 </div>
               </div>
               <div style="display:flex; align-items:center; gap:8px;">
-                <button class="btn-download-pill" onclick="downloadCSV('schedule')" title="Download Schedule (CSV)">⬇️ Download CSV</button>
                 <button class="panel-dots-btn" title="Options">⋮</button>
               </div>
             </div>
@@ -330,75 +329,38 @@
             </div>
           </div>
 
-          <!-- Right: Recent Enrollments & Live Defaulter Alerts Report Bar -->
-          <div class="right-col-stack">
-            <div class="panel">
-              <div class="panel-header">
-                <div class="panel-title-with-icon">
-                  <span class="panel-icon blue">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                  </span>
-                  <div>
-                    <div class="panel-title-text">Recent Enrollments</div>
-                    <div class="panel-subtitle-text">Latest participant enrollments</div>
-                  </div>
-                </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <button class="btn-download-pill" onclick="downloadCSV('nominations')" title="Download Enrollments (CSV)">⬇️ Download CSV</button>
-                  <button class="view-all-link-btn" onclick="switchPage('enrollments')">View All</button>
+          <!-- Right: Recent Enrollments -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </span>
+                <div>
+                  <div class="panel-title-text">Recent Enrollments</div>
+                  <div class="panel-subtitle-text">Latest participant registrations across departments</div>
                 </div>
               </div>
-              <div class="table-container clean-table-container">
-                <table id="dash-enroll-table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Course</th>
-                      <th>Batch</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Populated dynamically -->
-                  </tbody>
-                </table>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn-download-pill" onclick="downloadCSV('nominations')" title="Download Enrollments (CSV)">⬇️ Download CSV</button>
+                <button class="view-all-link-btn" onclick="switchPage('enrollments')">View All</button>
               </div>
             </div>
-
-            <!-- Report bar right side: Attendance Defaulter Alerts (<80% & absent >= 2 classes) -->
-            <div class="panel attendance-alert-panel">
-              <div class="panel-header">
-                <div class="panel-title-with-icon">
-                  <span class="panel-icon red">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                  </span>
-                  <div>
-                    <div class="panel-title-text" style="color: #b91c1c;">⚠️ Attendance Defaulter Alerts</div>
-                    <div class="panel-subtitle-text">Attendance &lt; 80% &amp; Absent ≥ 2 Classes</div>
-                  </div>
-                </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <button class="btn-download-pill" onclick="downloadCSV('alerts')" title="Download Defaulters (CSV)">⬇️ Download CSV</button>
-                </div>
-              </div>
-              <div class="table-container clean-table-container alert-table-scroll">
-                <table id="dash-alerts-table">
-                  <thead>
-                    <tr>
-                      <th>Emp ID</th>
-                      <th>Name</th>
-                      <th>Course</th>
-                      <th>Absent</th>
-                      <th>Rate</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Populated dynamically -->
-                  </tbody>
-                </table>
-              </div>
+            <div class="table-container clean-table-container">
+              <table id="dash-enroll-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Batch</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -684,7 +646,7 @@
           </div>
           <div class="kpi-card green">
             <div class="kpi-label">Total Batches</div>
-            <div class="kpi-value" id="rep-batches">10</div>
+            <div class="kpi-value" id="rep-batches">9</div>
           </div>
           <div class="kpi-card purple">
             <div class="kpi-label">Registered Participants</div>
@@ -741,17 +703,7 @@
             <div class="kpi-content">
               <div class="kpi-label">Upcoming Class Nominations</div>
               <div class="kpi-value" id="nom-next-count">0</div>
-              <div class="kpi-sub">Queued participants (2nd Batch)</div>
-            </div>
-          </div>
-          <div class="kpi-card green">
-            <div class="kpi-icon-badge green">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            </div>
-            <div class="kpi-content">
-              <div class="kpi-label">Target Next Batch</div>
-              <div class="kpi-value" id="nom-next-target-batch" style="font-size:22px;">2nd Batch</div>
-              <div class="kpi-sub">Targeted upcoming session</div>
+              <div class="kpi-sub">Queued participants for upcoming classes</div>
             </div>
           </div>
         </div>
@@ -765,10 +717,9 @@
               </select>
             </div>
             <div style="flex: 1; min-width: 200px;">
-              <label class="form-label">Filter by Next Batch</label>
+              <label class="form-label">Filter by Batch</label>
               <select id="nom-next-batch-filter" class="input-field" onchange="renderNextClassNominations()">
-                <option value="All Batches">All (2nd Batch)</option>
-                <option value="2nd Batch">2nd Batch</option>
+                <option value="All Batches">All Batches</option>
               </select>
             </div>
             <div style="flex: 1.5; min-width: 260px;">
@@ -781,8 +732,8 @@
         <div class="panel">
           <div class="panel-header">
             <div>
-              <div class="panel-title">📋 Official Nominations for Next Training Classes (2nd Batch)</div>
-              <div class="panel-sub" id="nom-next-subtitle">Employees scheduled and queued for the 2nd batch sessions across KW&SC departments</div>
+              <div class="panel-title">📋 Official Nominations for Upcoming Training Classes</div>
+              <div class="panel-sub" id="nom-next-subtitle">Employees scheduled and queued for upcoming sessions across KW&SC departments</div>
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <span id="next-nom-live-badge" class="pill present" style="display:none; font-size:11.5px; padding: 4px 10px; background:#dcfce7; color:#15803d; border:1px solid #86efac; font-weight:700;">
@@ -808,7 +759,7 @@
                   <th>Designation</th>
                   <th>Department</th>
                   <th>Nominated Course</th>
-                  <th>Target Batch</th>
+                  <th>Batch</th>
                   <th>Mobile / Contact</th>
                   <th>Status</th>
                 </tr>
@@ -829,7 +780,7 @@
             <div class="kpi-content">
               <div class="kpi-label">Certificate Eligible Staff</div>
               <div class="kpi-value" id="cert-eligible-count">111</div>
-              <div class="kpi-sub" style="color:var(--success);">Verified Attendance ≥ 80%</div>
+              <div class="kpi-sub" style="color:var(--success);">Attended ≥ 8 of 10 Classes</div>
             </div>
           </div>
           <div class="kpi-card blue">
@@ -838,8 +789,8 @@
             </div>
             <div class="kpi-content">
               <div class="kpi-label">Minimum Requirement</div>
-              <div class="kpi-value">≥ 80%</div>
-              <div class="kpi-sub">Mandatory completion criteria</div>
+              <div class="kpi-value">8 / 10 Classes</div>
+              <div class="kpi-sub">80% mandatory completion criteria</div>
             </div>
           </div>
           <div class="kpi-card purple">
@@ -849,7 +800,7 @@
             <div class="kpi-content">
               <div class="kpi-label">100% Full Attendance</div>
               <div class="kpi-value" id="cert-distinction-count">85</div>
-              <div class="kpi-sub kpi-sub-purple">High Distinction Candidates</div>
+              <div class="kpi-sub kpi-sub-purple">10 of 10 Classes Attended</div>
             </div>
           </div>
         </div>
@@ -873,7 +824,7 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">🎓 KW&SC Course Certificate Eligibility Portal</div>
-              <div class="panel-sub">Verified list of candidates who have successfully attended 80% or more sessions and qualify for certificates</div>
+              <div class="panel-sub">Verified list of candidates who attended 8 or more classes out of 10 (≥ 80%) and qualify for official certification</div>
             </div>
             <button class="btn btn-primary" onclick="downloadCSV('certificates')" title="Download Certificate List (CSV)">⬇️ Download Certificate List (CSV)</button>
           </div>
@@ -887,9 +838,9 @@
                   <th>Department</th>
                   <th>Course</th>
                   <th>Batch</th>
-                  <th>Sessions Attended</th>
+                  <th>Classes Attended (Out of 10)</th>
                   <th>Attendance Rate</th>
-                  <th>Certificate Status</th>
+                  <th>Eligibility Status</th>
                 </tr>
               </thead>
               <tbody></tbody>

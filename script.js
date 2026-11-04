@@ -215,59 +215,8 @@ function normalizeAttendance(rows, defaultCourse = "KW&SC Training") {
 }
 
 function calculateAlerts(schedule, nominations, attendance) {
-  const alerts = [];
-
-  // 1. Under-enrolled batches (< 50% capacity)
-  try {
-    if (schedule && schedule.length > 0 && nominations && nominations.length > 0) {
-      const counts = {};
-      nominations.forEach(n => {
-        const c = String(n.Course || '').trim();
-        const b = String(n.Batch || '').trim();
-        const key = `${c}||${b}`;
-        counts[key] = (counts[key] || 0) + 1;
-      });
-
-      const under = [];
-      schedule.forEach(s => {
-        const c = String(s.Course || '').trim();
-        const b = String(s.Batch || '').trim();
-        const cap = parseFloat(s.Capacity) || 0;
-        const enrolled = counts[`${c}||${b}`] || 0;
-        if (cap > 0 && enrolled < (cap * 0.5)) {
-          under.push(`${c} (${b}): ${enrolled}/${Math.round(cap)}`);
-        }
-      });
-
-      if (under.length > 0) {
-        alerts.push({
-          level: "warning",
-          badge: "ACTION",
-          title: `${under.length} KW&SC training batches are under-enrolled (below 50% capacity).`,
-          detail: under.slice(0, 4).join('; ') + (under.length > 4 ? '; …' : '')
-        });
-      }
-    }
-  } catch (e) {
-    console.error("Alerts calculation (capacity) notice:", e);
-  }
-
-  // 2. Attendance Defaulters (<80% & absent >= 2 classes)
-  try {
-    const defaulters = getAttendanceDefaulters();
-    if (defaulters.length > 0) {
-      alerts.push({
-        level: "critical",
-        badge: "CRITICAL",
-        title: `${defaulters.length} participants have attendance below 80% and 2 or more absents.`,
-        detail: "Defaulters: " + defaulters.slice(0, 3).map(d => `${d.empName} (${d.rate}%)`).join(', ') + (defaulters.length > 3 ? ', …' : '')
-      });
-    }
-  } catch (e) {
-    console.error("Alerts calculation (defaulters) notice:", e);
-  }
-
-  return alerts;
+  // Capacity and dashboard attendance alerts removed as per specifications
+  return [];
 }
 
 // ============================================================
@@ -292,7 +241,7 @@ async function fetchAndParseExcel(url) {
 // Main Data Ingestion Function
 async function loadAllData() {
   // Clear any outdated cache from previous sessions to ensure verified data consistency
-  const DATA_VERSION = 'kwsc_v4_oct16_2026';
+  const DATA_VERSION = 'kwsc_v5_nov04_2026';
   try {
     if (localStorage.getItem('kwsc_app_version') !== DATA_VERSION) {
       localStorage.removeItem('kwsc_schedule');
@@ -413,12 +362,12 @@ function switchPage(pageId) {
 function renderDashboard() {
   const { schedule, courses, nominations, attendance } = appState.data;
 
-  // Upper Bar KPI Metrics (4 Courses, 10 Batches, 250 Enrolled)
+  // Upper Bar KPI Metrics (4 Courses, 9 Batches, 250 Enrolled)
   const courseCount = (courses && courses.length) || 4;
   const kpiCourses = document.getElementById('kpi-courses');
   if (kpiCourses) kpiCourses.textContent = courseCount;
 
-  const batches = (schedule && schedule.length) || 10;
+  const batches = (schedule && schedule.length) || 9;
   const kpiBatches = document.getElementById('kpi-batches');
   if (kpiBatches) kpiBatches.textContent = batches;
 
@@ -426,16 +375,12 @@ function renderDashboard() {
   const kpiEnrolled = document.getElementById('kpi-enrolled');
   if (kpiEnrolled) kpiEnrolled.textContent = enrolledCount;
 
-  // Card 1: Courses by Day Bar Chart (Increased Height & Vibrant Styling)
+  // Card 1: Courses by Day Bar Chart (Dynamic from active schedule)
   const days = ['Thursday', 'Friday', 'Saturday', 'Monday'];
   const counts = { 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Monday': 0 };
   schedule.forEach(s => {
     if (counts[s.Day] !== undefined) counts[s.Day]++;
   });
-  if (counts['Thursday'] === 0) counts['Thursday'] = 3;
-  if (counts['Friday'] === 0) counts['Friday'] = 3;
-  if (counts['Saturday'] === 0) counts['Saturday'] = 2;
-  if (counts['Monday'] === 0) counts['Monday'] = 2;
 
   const colors = ['#007bfd', '#10b981', '#8b5cf6', '#f59e0b'];
   const maxDayVal = Math.max(...Object.values(counts), 3);
@@ -477,7 +422,7 @@ function renderDashboard() {
   const coursesValEl = document.getElementById('qs-courses-val');
   if (coursesValEl) coursesValEl.textContent = courseCount;
 
-  // Middle Row Left: Upcoming Training Schedule Table (All 10 authentic batches from schedule.xlsx)
+  // Middle Row Left: Upcoming Training Schedule Table (9 authentic active batches)
   const schedTbody = document.querySelector('#dash-schedule-table tbody');
   if (schedTbody) {
     schedTbody.innerHTML = schedule.map(s => `
@@ -491,11 +436,8 @@ function renderDashboard() {
     `).join('');
   }
 
-  // Middle Row Right 1: Recent Enrollments Table
+  // Middle Row Right: Recent Enrollments Table
   renderRecentEnrollments();
-
-  // Middle Row Right 2: Live Attendance Defaulter Alerts Table (<80% & absent >= 2 classes)
-  renderAttendanceAlerts();
 
   // Bottom Row 1: Live Attendance Indicators
   const liveEnrolled = document.getElementById('live-stat-enrolled');
@@ -731,7 +673,7 @@ function renderRecentEnrollments() {
   if (!tbody) return;
 
   const noms = sortByDateDescending(appState.data.nominations || []);
-  const recent = noms.slice(0, 6);
+  const recent = noms.slice(0, 9);
 
   if (recent.length === 0) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#94a3b8;">No enrollments recorded yet.</td></tr>';
@@ -768,21 +710,17 @@ function renderRecentEnrollments() {
   }).join('');
 }
 
-// Render Nominations for Next Training Classes (Target: 2nd Batch Only)
+// Render Nominations for Next Training Classes
 function renderNextClassNominations() {
   const nom = appState.data.nominations || [];
   const nextNoms = nom.filter(n => {
-    const b = String(n.Batch || '').toLowerCase();
     const s = String(n.Status || '').toLowerCase();
-    const is2nd = b.includes('2nd') || b.includes('batch 2') || (b.includes('2') && !b.includes('12') && !b.includes('20') && !b.includes('1st') && !b.includes('3rd') && !b.includes('4th'));
-    return is2nd || (s.includes('next') && !b.includes('1st') && !b.includes('3rd') && !b.includes('4th'));
+    const b = String(n.Batch || '').toLowerCase();
+    return s.includes('nom') || s.includes('next') || s.includes('upcom') || !b.includes('1st') || n.isNextNomination;
   });
 
   const countEl = document.getElementById('nom-next-count');
   if (countEl) countEl.textContent = nextNoms.length;
-
-  const targetBatchEl = document.getElementById('nom-next-target-batch');
-  if (targetBatchEl) targetBatchEl.textContent = '2nd Batch';
 
   const coursesSet = new Set(nextNoms.map(n => n.Course).filter(Boolean));
   const batchesSet = new Set(nextNoms.map(n => n.Batch).filter(Boolean));
@@ -798,10 +736,14 @@ function renderNextClassNominations() {
   }
 
   const batchFilter = document.getElementById('nom-next-batch-filter');
-  if (batchFilter && batchFilter.options.length <= 1) {
-    batchFilter.innerHTML = '<option value="All Batches">All (2nd Batch)</option>' + Array.from(batchesSet).map(b => `
+  if (batchFilter) {
+    const curVal = batchFilter.value;
+    batchFilter.innerHTML = '<option value="All Batches">All Batches</option>' + Array.from(batchesSet).map(b => `
       <option value="${escapeHtml(b)}">${escapeHtml(b)}</option>
     `).join('');
+    if (curVal && Array.from(batchesSet).includes(curVal)) {
+      batchFilter.value = curVal;
+    }
   }
 
   const selectedCourse = courseFilter ? courseFilter.value : 'All Courses';
@@ -823,7 +765,7 @@ function renderNextClassNominations() {
   if (!tbody) return;
 
   if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px; color:#94a3b8;">No 2nd batch nominations found matching filters.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px; color:#94a3b8;">No upcoming nominations found matching filters.</td></tr>';
     return;
   }
 
@@ -834,14 +776,14 @@ function renderNextClassNominations() {
       <td>${escapeHtml(n.Designation || 'KW&SC Staff')}</td>
       <td>${escapeHtml(n.Department || 'Operations')}</td>
       <td><b>${escapeHtml(n.Course || '')}</b></td>
-      <td><span class="pill day">${escapeHtml(n.Batch || '2nd Batch')}</span></td>
+      <td><span class="pill day">${escapeHtml(n.Batch || 'Upcoming Batch')}</span></td>
       <td><small style="color:#64748b;">${escapeHtml(n.Mobile || n.Contact || '0300-XXXXXXX')}</small></td>
-      <td><span class="status-pill pending" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;">Nominated (2nd Batch)</span></td>
+      <td><span class="status-pill pending" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;">${escapeHtml(n.Status || 'Nominated')}</span></td>
     </tr>
   `).join('');
 }
 
-// Normalize incoming spreadsheet rows into Next Class Nominations (2nd Batch)
+// Normalize incoming spreadsheet rows into Next Class Nominations
 function normalizeNextNominationRow(row, idx) {
   if (!row || typeof row !== 'object') return null;
 
@@ -878,18 +820,15 @@ function normalizeNextNominationRow(row, idx) {
     else if (!status && statusAliases.includes(low)) status = val;
   }
 
-  // Ensure default fallbacks matching 2nd batch next nominations
+  // Ensure sensible defaults without forcing any specific batch
   empNo = empNo || `KW-${2000 + idx}`;
   empName = empName || `KW&SC Nominee ${idx + 1}`;
   course = course || "AI / Python";
   designation = designation || "KW&SC Staff";
   department = department || "Operations";
-  batch = batch || "2nd Batch";
-  if (!batch.toLowerCase().includes('2nd') && !batch.toLowerCase().includes('batch 2')) {
-    batch = "2nd Batch";
-  }
+  batch = batch || "Upcoming Batch";
   mobile = mobile || "0300-XXXXXXX";
-  status = status || "Nominated (Next)";
+  status = status || "Nominated";
 
   return {
     "Employee No": empNo,
@@ -900,7 +839,8 @@ function normalizeNextNominationRow(row, idx) {
     "Batch": batch,
     "Mobile": mobile,
     "Status": status,
-    "Date": cleanDateStr(row.Date) || "16 Oct 2026"
+    "Date": cleanDateStr(row.Date) || "16 Oct 2026",
+    isNextNomination: true
   };
 }
 
@@ -910,12 +850,8 @@ function applyNextNominationRows(newRows, sourceDescription = 'Spreadsheet') {
   const validRows = newRows.map((r, i) => normalizeNextNominationRow(r, i)).filter(Boolean);
   if (validRows.length === 0) return;
 
-  // Filter out existing 2nd batch nominations so they get replaced cleanly with the uploaded/synced ones
-  const otherNominations = (appState.data.nominations || []).filter(n => {
-    const b = String(n.Batch || '').toLowerCase();
-    const is2nd = b.includes('2nd') || b.includes('batch 2') || (b.includes('2') && !b.includes('12') && !b.includes('20') && !b.includes('1st') && !b.includes('3rd') && !b.includes('4th'));
-    return !is2nd;
-  });
+  // Replace previously loaded next nominations with the newly uploaded/synced ones
+  const otherNominations = (appState.data.nominations || []).filter(n => !n.isNextNomination);
 
   appState.data.nominations = [...validRows, ...otherNominations];
   try {
@@ -1208,7 +1144,10 @@ function uploadNextNomFile(inputElem) {
 }
 
 
-// Compute Certificate Eligible Participants (attendance >= 80%)
+// Compute Certificate Eligible Participants (must attend at least 8 out of 10 classes)
+const TOTAL_COURSE_CLASSES = 10;
+const MINIMUM_ATTENDANCE_CLASSES = 8;
+
 function getCertificateEligible() {
   const att = appState.data.attendance || [];
   const nom = appState.data.nominations || [];
@@ -1226,10 +1165,10 @@ function getCertificateEligible() {
         designation: a['Designation'] || 'KW&SC Staff',
         department: 'Operations',
         course: a['Course'] || '',
-        batch: '1st Batch',
+        batch: a['Batch'] || '1st Batch',
         presentCount: 0,
         absentCount: 0,
-        total: 0
+        total: TOTAL_COURSE_CLASSES
       };
     }
     const isPresent = String(a['Attendance'] || '').toLowerCase().includes('present');
@@ -1238,7 +1177,6 @@ function getCertificateEligible() {
     } else {
       empMap[key].absentCount++;
     }
-    empMap[key].total++;
   });
 
   nom.forEach(n => {
@@ -1255,14 +1193,14 @@ function getCertificateEligible() {
 
   const eligible = [];
   Object.values(empMap).forEach(e => {
-    const rate = e.total > 0 ? Math.round((e.presentCount / e.total) * 100) : 0;
-    e.rate = rate;
-    if (rate >= 80) {
+    e.totalClasses = TOTAL_COURSE_CLASSES;
+    e.rate = Math.round((e.presentCount / TOTAL_COURSE_CLASSES) * 100);
+    if (e.presentCount >= MINIMUM_ATTENDANCE_CLASSES) {
       eligible.push(e);
     }
   });
 
-  eligible.sort((a, b) => b.rate - a.rate || a.empName.localeCompare(b.empName));
+  eligible.sort((a, b) => b.presentCount - a.presentCount || b.rate - a.rate || a.empName.localeCompare(b.empName));
   return eligible;
 }
 
@@ -1273,7 +1211,7 @@ function renderCertificateEligibility() {
   const countEl = document.getElementById('cert-eligible-count');
   if (countEl) countEl.textContent = eligible.length;
 
-  const distinctionCount = eligible.filter(e => e.rate === 100).length;
+  const distinctionCount = eligible.filter(e => e.presentCount >= TOTAL_COURSE_CLASSES).length;
   const distEl = document.getElementById('cert-distinction-count');
   if (distEl) distEl.textContent = distinctionCount || 85;
 
@@ -1315,9 +1253,9 @@ function renderCertificateEligibility() {
       <td>${escapeHtml(e.department)}</td>
       <td><b>${escapeHtml(e.course)}</b></td>
       <td><span class="pill day">${escapeHtml(e.batch || '1st Batch')}</span></td>
-      <td><b style="color:#10b981;">${e.presentCount}</b> / ${e.total} classes</td>
+      <td><b style="color:#10b981; font-size:14px;">${e.presentCount}</b> / 10 classes</td>
       <td><b style="color:#10b981; font-size:14px;">${e.rate}%</b></td>
-      <td><span class="pill present" style="font-weight:700;">Qualified (≥80%)</span></td>
+      <td><span class="pill present" style="font-weight:700;">Eligible (≥ 8/10 Classes)</span></td>
     </tr>
   `).join('');
 }
@@ -1559,7 +1497,7 @@ function renderReports() {
   if (repProg) repProg.textContent = courses.length || 4;
   
   const repBatches = document.getElementById('rep-batches');
-  if (repBatches) repBatches.textContent = schedule.length || 10;
+  if (repBatches) repBatches.textContent = schedule.length || 9;
   
   const repPart = document.getElementById('rep-participants');
   if (repPart) repPart.textContent = nominations.length || 250;
@@ -2183,12 +2121,11 @@ function executeDownload(type, customData = null) {
   } else if (type === 'nominations_next') {
     const nom = appState.data.nominations || [];
     rows = nom.filter(n => {
-      const b = String(n.Batch || '').toLowerCase();
       const s = String(n.Status || '').toLowerCase();
-      const is2nd = b.includes('2nd') || b.includes('batch 2') || (b.includes('2') && !b.includes('12') && !b.includes('20') && !b.includes('1st') && !b.includes('3rd') && !b.includes('4th'));
-      return is2nd || (s.includes('next') && !b.includes('1st') && !b.includes('3rd') && !b.includes('4th'));
+      const b = String(n.Batch || '').toLowerCase();
+      return s.includes('nom') || s.includes('next') || s.includes('upcom') || !b.includes('1st') || n.isNextNomination;
     });
-    filename = 'kwsc_next_class_nominations_2nd_batch.csv';
+    filename = 'kwsc_next_class_nominations.csv';
   } else if (type === 'certificates') {
     rows = getCertificateEligible().map(e => ({
       "Employee No": e.empNo,
@@ -2197,10 +2134,10 @@ function executeDownload(type, customData = null) {
       "Department": e.department,
       "Course": e.course,
       "Batch": e.batch || '1st Batch',
-      "Attended Classes": e.presentCount,
-      "Total Classes": e.total,
+      "Classes Attended": `${e.presentCount} / 10`,
+      "Total Classes": 10,
       "Attendance Rate": e.rate + '%',
-      "Eligibility": "Eligible for KW&SC Certificate (≥ 80%)"
+      "Eligibility Status": "Eligible (≥ 8/10 Classes)"
     }));
     filename = 'kwsc_certificate_eligible_participants.csv';
   } else if (type === 'all') {

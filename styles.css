@@ -972,7 +972,7 @@ body {
    ============================================================ */
 .dash-row-split {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 20px;
 }
