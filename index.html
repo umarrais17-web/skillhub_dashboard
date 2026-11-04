@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KW&SC Skill Hub Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%3E%3Ctext y=%2226%22 font-size=%2226%22>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- SheetJS for client-side Excel parsing (xlsx, xls, csv) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/kwsc_logo.png" alt="KW&SC Skill Hub" class="sidebar-logo" onerror="if(this.src!=='kwsc_logo.png')this.src='kwsc_logo.png';">
+    </div>
+
+    <ul class="nav-list">
+      <li>
+        <button class="nav-btn active" onclick="switchPage('dashboard')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>
+          Dashboard
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" onclick="switchPage('schedule')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+          Training Schedule
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" onclick="switchPage('enrollments')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+          Enrollments
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" onclick="switchPage('attendance')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span>
+          Attendance
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" onclick="switchPage('course_attendance')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
+          Course-wise Attendance
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" onclick="switchPage('reports')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span>
+          Reports
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" id="nav-btn-nominations_next" onclick="switchPage('nominations_next')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg></span>
+          <span style="flex:1;">Next Class Nominations</span>
+          <span class="nav-badge-pill">New</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" id="nav-btn-certificates" onclick="switchPage('certificates')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></span>
+          <span style="flex:1;">Certificate Eligibility</span>
+          <span class="nav-badge-pill success">≥80%</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn nav-btn-has-arrow" onclick="toggleDataManagementNav()">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+          <span style="flex:1;">Data Management</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </li>
+    </ul>
+
+    <!-- Lower Sidebar: Mazar Photo Card with integrated Password Protection -->
+    <div class="sidebar-mazar-card">
+      <div class="sidebar-lock-widget" id="sidebar-lock-widget">
+        <div class="lock-icon-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <div class="lock-title">Data Management</div>
+        <div class="lock-desc">This section is password protected</div>
+        <div class="lock-hint" id="sidebar-lock-hint">Password Protected</div>
+        
+        <div class="sidebar-pass-wrap" id="sidebar-pass-container">
+          <input type="password" id="sidebar-password-input" class="sidebar-pass-input" placeholder="Enter password..." autocomplete="new-password" onkeydown="if(event.key==='Enter') submitSidebarUnlock()">
+          <button type="button" class="sidebar-eye-btn" onclick="toggleSidebarPasswordVisibility()" title="Show/Hide Password">
+            <svg id="eye-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+        
+        <button class="sidebar-unlock-btn" id="sidebar-unlock-btn" onclick="submitSidebarUnlock()">Unlock</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main id="main-content">
+    <!-- Topbar with Karachi Skyline silhouette watermark -->
+    <header class="topbar">
+      <div class="topbar-skyline-bg"></div>
+      <div class="topbar-titles">
+        <div class="eyebrow">KARACHI WATER &amp; SEWERAGE CORPORATION |</div>
+        <h1 class="main-heading" id="view-title">KW&SC Skill Hub Dashboard</h1>
+        <div class="main-sub" id="view-subtitle">Empowering Our People &nbsp;|&nbsp; Building a Better Tomorrow</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-input-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="text" id="global-search" class="search-input" placeholder="Search courses, trainees, or other data..." oninput="handleSearch(this.value)">
+        </div>
+        <div class="date-time-badge" id="date-time-badge" title="Karachi Standard Time (PKT GMT+5)">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#007bfd" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span id="live-karachi-clock">Thursday, 5 June 2025 | Karachi Time: 12:47 PM</span>
+        </div>
+        <div class="user-avatar-btn" title="KW&SC Administrator">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- VIEWS CONTAINER -->
+    <div id="views-container">
+      <!-- 1. DASHBOARD VIEW -->
+      <section id="view-dashboard" class="page-view">
+        <!-- 4 KPI Metric Cards Row -->
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-card-clickable" onclick="openCoursesStatusModal()" role="button" tabindex="0" title="Click to view Courses overview and status">
+            <div class="kpi-icon-badge blue">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-header-row">
+                <span class="kpi-label">Total Courses</span>
+                <span class="kpi-click-hint">View status ↗</span>
+              </div>
+              <div class="kpi-value" id="kpi-courses">4</div>
+              <div class="kpi-sub">Active training tracks</div>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-card-clickable" onclick="switchPage('schedule')" role="button" tabindex="0" title="Click to view all Training Schedules and Batches">
+            <div class="kpi-icon-badge green">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-header-row">
+                <span class="kpi-label">Total Batches</span>
+                <span class="kpi-click-hint">View schedule ↗</span>
+              </div>
+              <div class="kpi-value" id="kpi-batches">10</div>
+              <div class="kpi-sub">Across all courses</div>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-card-clickable" onclick="switchPage('enrollments')" role="button" tabindex="0" title="Click to view all Registered Staff Enrollments">
+            <div class="kpi-icon-badge purple">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-header-row">
+                <span class="kpi-label">Total Enrolled</span>
+                <span class="kpi-click-hint">View trainees ↗</span>
+              </div>
+              <div class="kpi-value" id="kpi-enrolled">250</div>
+              <div class="kpi-sub kpi-sub-purple">Registered participants</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle Row: Charts & Quick Stats -->
+        <div class="dash-row-3col">
+          <!-- Card 1: Courses by Day -->
+          <div class="panel dash-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </span>
+                <span class="panel-title-text">Courses by Day</span>
+              </div>
+              <button class="panel-dots-btn" title="Options">⋮</button>
+            </div>
+            <div class="day-chart-wrapper">
+              <div class="day-chart-y-axis">
+                <span class="y-label">Number of Courses</span>
+                <div class="y-ticks">
+                  <span>8</span>
+                  <span>6</span>
+                  <span>4</span>
+                  <span>2</span>
+                  <span>0</span>
+                </div>
+              </div>
+              <div class="bars-chart" id="day-bars-chart">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Courses by Type -->
+          <div class="panel dash-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                </span>
+                <span class="panel-title-text">Courses by Type</span>
+              </div>
+              <button class="panel-dots-btn" title="Options">⋮</button>
+            </div>
+            <div class="donut-chart-container">
+              <div class="donut-graphic-wrap">
+                <div class="donut-circle" id="donut-circle-wrap">
+                  <div class="donut-hole">
+                    <span class="donut-number" id="donut-center-num">10</span>
+                    <span class="donut-label">Courses</span>
+                  </div>
+                </div>
+              </div>
+              <div class="donut-legend" id="donut-program-list">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Quick Stats -->
+          <div class="panel dash-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                </span>
+                <span class="panel-title-text">Quick Stats</span>
+              </div>
+              <button class="panel-dots-btn" title="Options">⋮</button>
+            </div>
+            <div class="quick-stats-rows">
+              <div class="qs-item">
+                <div class="qs-badge green">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <span class="qs-title">Present Today</span>
+                <div class="qs-values">
+                  <span class="qs-num" id="qs-present-val">90</span>
+                  <span class="qs-percent" id="qs-present-pct">(92%)</span>
+                </div>
+              </div>
+              <div class="qs-item">
+                <div class="qs-badge red">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </div>
+                <span class="qs-title">Absent Today</span>
+                <div class="qs-values">
+                  <span class="qs-num text-red" id="qs-absent-val">8</span>
+                  <span class="qs-percent text-red" id="qs-absent-pct">(8%)</span>
+                </div>
+              </div>
+              <div class="qs-item">
+                <div class="qs-badge blue">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <span class="qs-title">Total Participants</span>
+                <div class="qs-values">
+                  <span class="qs-num" id="qs-staff-val">98</span>
+                  <span class="qs-percent" id="qs-staff-pct">(100%)</span>
+                </div>
+              </div>
+              <div class="qs-item">
+                <div class="qs-badge purple">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </div>
+                <span class="qs-title">Total Courses</span>
+                <div class="qs-values">
+                  <span class="qs-num" id="qs-courses-val">4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Third Row: Upcoming Training Schedule & Recent Enrollments + Defaulter Alerts -->
+        <div class="dash-row-split">
+          <!-- Left: Upcoming Training Schedule -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </span>
+                <div>
+                  <div class="panel-title-text">Upcoming Training Schedule</div>
+                  <div class="panel-subtitle-text">Official KW&SC Session Batches &amp; Timings</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn-download-pill" onclick="downloadCSV('schedule')" title="Download Schedule (CSV)">⬇️ Download CSV</button>
+                <button class="panel-dots-btn" title="Options">⋮</button>
+              </div>
+            </div>
+            <div class="table-container clean-table-container">
+              <table id="dash-schedule-table">
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Course</th>
+                    <th>Batch</th>
+                    <th>Time</th>
+                    <th>Capacity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right: Recent Enrollments & Live Defaulter Alerts Report Bar -->
+          <div class="right-col-stack">
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title-with-icon">
+                  <span class="panel-icon blue">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </span>
+                  <div>
+                    <div class="panel-title-text">Recent Enrollments</div>
+                    <div class="panel-subtitle-text">Latest participant enrollments</div>
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <button class="btn-download-pill" onclick="downloadCSV('nominations')" title="Download Enrollments (CSV)">⬇️ Download CSV</button>
+                  <button class="view-all-link-btn" onclick="switchPage('enrollments')">View All</button>
+                </div>
+              </div>
+              <div class="table-container clean-table-container">
+                <table id="dash-enroll-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Course</th>
+                      <th>Batch</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Report bar right side: Attendance Defaulter Alerts (<80% & absent >= 2 classes) -->
+            <div class="panel attendance-alert-panel">
+              <div class="panel-header">
+                <div class="panel-title-with-icon">
+                  <span class="panel-icon red">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                  <div>
+                    <div class="panel-title-text" style="color: #b91c1c;">⚠️ Attendance Defaulter Alerts</div>
+                    <div class="panel-subtitle-text">Attendance &lt; 80% &amp; Absent ≥ 2 Classes</div>
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <button class="btn-download-pill" onclick="downloadCSV('alerts')" title="Download Defaulters (CSV)">⬇️ Download CSV</button>
+                </div>
+              </div>
+              <div class="table-container clean-table-container alert-table-scroll">
+                <table id="dash-alerts-table">
+                  <thead>
+                    <tr>
+                      <th>Emp ID</th>
+                      <th>Name</th>
+                      <th>Course</th>
+                      <th>Absent</th>
+                      <th>Rate</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Row: 3 Widgets -->
+        <div class="dash-row-bottom">
+          <!-- 1. Live Attendance (Google Spreadsheet) -->
+          <div class="panel bottom-widget-card">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                </span>
+                <div>
+                  <div class="panel-title-text">Live Attendance (Google Spreadsheet)</div>
+                  <div class="panel-subtitle-status">
+                    <span class="live-status-dot"></span>
+                    <span>Connected to Google Sheets</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn-download-pill" onclick="downloadCSV('attendance')" title="Download Live Attendance (CSV)">⬇️ Download CSV</button>
+                <div class="dropdown-trigger-btn" onclick="switchPage('data_management')" title="View Google Sheets Sync Settings">
+                  <span>View Live Data</span>
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+              </div>
+            </div>
+            <div class="live-attendance-metrics">
+              <div class="live-att-metric">
+                <div class="live-metric-icon blue">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <div class="live-metric-text">
+                  <span class="live-metric-label">Enrolled</span>
+                  <span class="live-metric-val" id="live-stat-enrolled">98</span>
+                </div>
+              </div>
+              <div class="live-att-metric">
+                <div class="live-metric-icon green">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="live-metric-text">
+                  <span class="live-metric-label">Present</span>
+                  <span class="live-metric-val" id="live-stat-present">90</span>
+                </div>
+              </div>
+              <div class="live-att-metric">
+                <div class="live-metric-icon red">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </div>
+                <div class="live-metric-text">
+                  <span class="live-metric-label">Absent</span>
+                  <span class="live-metric-val text-red" id="live-stat-absent">8</span>
+                </div>
+              </div>
+              <div class="live-att-metric">
+                <div class="live-metric-icon emerald">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
+                </div>
+                <div class="live-metric-text">
+                  <span class="live-metric-label">Attendance Rate</span>
+                  <span class="live-metric-val" id="live-stat-rate">92%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Course-wise Attendance -->
+          <div class="panel bottom-widget-card">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                </span>
+                <div>
+                  <div class="panel-title-text">Course-wise Attendance</div>
+                  <div class="panel-subtitle-text">View attendance by course (current session)</div>
+                </div>
+              </div>
+            </div>
+            <div class="cw-widget-body">
+              <div class="cw-course-name" id="cw-dash-name">AI Python</div>
+              <div class="cw-stat-line">
+                <span>Present: <b id="cw-dash-present">28</b></span>
+                <span>Absent: <b id="cw-dash-absent">3</b></span>
+                <span>Total: <b id="cw-dash-total">31</b></span>
+                <span class="cw-pct-badge" id="cw-dash-rate">(90%)</span>
+              </div>
+              <div class="cw-action-row">
+                <button class="cw-details-link" onclick="openCourseDetails('AI Python')">View Details</button>
+                <button class="btn-download-pill" onclick="downloadCSV('course_attendance')" title="Download Course Attendance (CSV)">⬇️ Download CSV</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Employee Training History -->
+          <div class="panel bottom-widget-card">
+            <div class="panel-header">
+              <div class="panel-title-with-icon">
+                <span class="panel-icon blue">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </span>
+                <div>
+                  <div class="panel-title-text">Employee Training History</div>
+                  <div class="panel-subtitle-text">Last course attended by employees</div>
+                </div>
+              </div>
+              <button class="btn-download-pill" onclick="downloadCSV('employee_history')" title="Download Employee History (CSV)">⬇️ Download CSV</button>
+            </div>
+            <div class="table-container mini-table-container">
+              <table id="dash-history-table">
+                <thead>
+                  <tr>
+                    <th>Employee No</th>
+                    <th>Employee Name</th>
+                    <th>Last Course</th>
+                    <th>Date</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. TRAINING SCHEDULE VIEW -->
+      <section id="view-schedule" class="page-view" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">📅 KW&SC Complete Training Schedule</div>
+              <div class="panel-sub">All active weekly batches, day timings, and maximum room quotas</div>
+            </div>
+            <a href="javascript:void(0)" onclick="downloadCSV('schedule')" class="btn btn-primary">⬇️ Download Schedule (CSV)</a>
+          </div>
+          <div class="table-container">
+            <table id="full-schedule-table">
+              <thead><tr><th>Day</th><th>Course</th><th>Batch</th><th>Time</th><th>Capacity</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. ENROLLMENTS VIEW -->
+      <section id="view-enrollments" class="page-view" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">👥 Registered Staff Participants</div>
+              <div class="panel-sub">Official employee training nominations across KW&amp;SC departments</div>
+            </div>
+            <a href="javascript:void(0)" onclick="downloadCSV('nominations')" class="btn btn-primary">⬇️ Download Enrollments (CSV)</a>
+          </div>
+          <div class="table-container">
+            <table id="full-enroll-table">
+              <thead><tr><th>Emp No</th><th>Employee Name</th><th>Designation</th><th>Department</th><th>Course</th><th>Batch</th><th>Date</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. ATTENDANCE VIEW -->
+      <section id="view-attendance" class="page-view" style="display: none;">
+        <div class="kpi-grid" style="margin-bottom: 18px;">
+          <div class="kpi-card green">
+            <div class="kpi-label">Present Records</div>
+            <div class="kpi-value" id="att-present-count">0</div>
+          </div>
+          <div class="kpi-card orange">
+            <div class="kpi-label">Absent Records</div>
+            <div class="kpi-value" id="att-absent-count">0</div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-label">Total Logs</div>
+            <div class="kpi-value" id="att-total-count">0</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">✅ Training Attendance Logs</div>
+              <div class="panel-sub">Recorded attendance logs from sessions and Google Sheets sync</div>
+            </div>
+            <a href="javascript:void(0)" onclick="downloadCSV('attendance')" class="btn btn-primary">⬇️ Download Attendance (CSV)</a>
+          </div>
+          <div class="table-container">
+            <table id="full-att-table">
+              <thead><tr><th>Emp No</th><th>Employee Name</th><th>Course</th><th>Date</th><th>Attendance</th><th>Remarks</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. COURSE-WISE ATTENDANCE VIEW -->
+      <section id="view-course_attendance" class="page-view" style="display: none;">
+        <div class="panel" style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 240px;">
+              <label class="form-label">Filter by KW&SC Course</label>
+              <select id="course-filter-select" class="input-field" onchange="renderCourseWiseAttendance()">
+                <option value="All Courses">All Courses</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card blue">
+            <div class="kpi-label">Current Participants</div>
+            <div class="kpi-value" id="cw-participants">0</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Present Records</div>
+            <div class="kpi-value" id="cw-present">0</div>
+          </div>
+          <div class="kpi-card orange">
+            <div class="kpi-label">Absent Records</div>
+            <div class="kpi-value" id="cw-absent">0</div>
+          </div>
+          <div class="kpi-card purple">
+            <div class="kpi-label">Attendance Rate</div>
+            <div class="kpi-value" id="cw-rate">0%</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom: 24px;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">👥 Enrolled Participants Summary</div>
+              <div class="panel-sub">Calculated individual attendance percentages and last recorded sessions</div>
+            </div>
+            <button class="btn btn-primary" onclick="downloadCSV('course_attendance')" title="Download Course Attendance (CSV)">⬇️ Download Course Attendance (CSV)</button>
+          </div>
+          <div class="table-container">
+            <table id="cw-participants-table">
+              <thead><tr><th>Emp No</th><th>Name</th><th>Designation</th><th>Department</th><th>Batch</th><th>Present</th><th>Absent</th><th>Rate</th><th>Last Attendance</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Individual Timeline Inspector -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">🔍 Participant Attendance History Inspector</div>
+              <div class="panel-sub">Select any staff member to view full chronological session history</div>
+            </div>
+            <button class="btn btn-outline" onclick="downloadCSV('emp_history')" title="Download History (CSV)">⬇️ Download History (CSV)</button>
+          </div>
+          <div style="max-width: 420px; margin-bottom: 16px;">
+            <label class="form-label">Select Employee</label>
+            <select id="employee-inspector-select" class="input-field" onchange="renderEmployeeHistory()">
+              <option value="">-- Choose Employee --</option>
+            </select>
+          </div>
+          <div id="employee-inspector-result">
+            <div class="table-container">
+              <table id="emp-history-table">
+                <thead><tr><th>Emp No</th><th>Employee Name</th><th>Attendance Date</th><th>Course</th><th>Status</th><th>Remarks</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. REPORTS VIEW -->
+      <section id="view-reports" class="page-view" style="display: none;">
+        <div class="kpi-grid">
+          <div class="kpi-card blue">
+            <div class="kpi-label">Total Programs</div>
+            <div class="kpi-value" id="rep-programs">4</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Total Batches</div>
+            <div class="kpi-value" id="rep-batches">10</div>
+          </div>
+          <div class="kpi-card purple">
+            <div class="kpi-label">Registered Participants</div>
+            <div class="kpi-value" id="rep-participants">250</div>
+          </div>
+          <div class="kpi-card orange">
+            <div class="kpi-label">Average Attendance</div>
+            <div class="kpi-value" id="rep-attendance">92%</div>
+          </div>
+        </div>
+
+        <!-- Attendance Defaulters Report Table (<80% & absent >= 2 classes) -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title-with-icon">
+              <span class="panel-icon red">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              </span>
+              <div>
+                <div class="panel-title-text" style="color:#b91c1c;">⚠️ Attendance Defaulter Alerts (Attendance &lt; 80% &amp; Absent ≥ 2 Classes)</div>
+                <div class="panel-subtitle-text">Official defaulter listing for administrative review and training attendance enforcement</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="downloadCSV('alerts')" title="Download Defaulters List (CSV)">⬇️ Download Defaulters List (CSV)</button>
+          </div>
+          <div class="table-container">
+            <table id="reports-alerts-table">
+              <thead>
+                <tr>
+                  <th>Emp ID</th>
+                  <th>Employee Name</th>
+                  <th>Designation</th>
+                  <th>Department</th>
+                  <th>Course</th>
+                  <th>Total Classes</th>
+                  <th>Absent Classes</th>
+                  <th>Attendance Rate</th>
+                  <th>Alert Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. NEXT CLASS NOMINATIONS VIEW -->
+      <section id="view-nominations_next" class="page-view" style="display: none;">
+        <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 24px;">
+          <div class="kpi-card blue">
+            <div class="kpi-icon-badge blue">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Upcoming Class Nominations</div>
+              <div class="kpi-value" id="nom-next-count">0</div>
+              <div class="kpi-sub">Queued participants (2nd Batch)</div>
+            </div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-icon-badge green">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Target Next Batch</div>
+              <div class="kpi-value" id="nom-next-target-batch" style="font-size:22px;">2nd Batch</div>
+              <div class="kpi-sub">Targeted upcoming session</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 240px;">
+              <label class="form-label">Filter by Course</label>
+              <select id="nom-next-course-filter" class="input-field" onchange="renderNextClassNominations()">
+                <option value="All Courses">All Courses</option>
+              </select>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <label class="form-label">Filter by Next Batch</label>
+              <select id="nom-next-batch-filter" class="input-field" onchange="renderNextClassNominations()">
+                <option value="All Batches">All (2nd Batch)</option>
+                <option value="2nd Batch">2nd Batch</option>
+              </select>
+            </div>
+            <div style="flex: 1.5; min-width: 260px;">
+              <label class="form-label">Search Nominees</label>
+              <input type="text" id="nom-next-search" class="input-field" placeholder="Search by employee name, ID or department..." oninput="renderNextClassNominations()">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">📋 Official Nominations for Next Training Classes (2nd Batch)</div>
+              <div class="panel-sub" id="nom-next-subtitle">Employees scheduled and queued for the 2nd batch sessions across KW&SC departments</div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <span id="next-nom-live-badge" class="pill present" style="display:none; font-size:11.5px; padding: 4px 10px; background:#dcfce7; color:#15803d; border:1px solid #86efac; font-weight:700;">
+                🟢 Live Synced
+              </span>
+              <button class="btn btn-outline" id="btn-refresh-next-live" style="display:none; padding:7px 12px; font-size:12px;" onclick="syncNextNomGoogleSheet(false)" title="Refresh Live Google Sheet">
+                🔄 Refresh Live
+              </button>
+              <button class="btn btn-primary" style="padding: 7px 14px; font-size: 12.5px; display:inline-flex; align-items:center; gap:6px;" onclick="handleOpenNextNomSpreadsheetModal()" title="Upload Spreadsheet or Connect Google Sheet (Password Protected)">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Upload / Link Spreadsheet</span>
+                <span style="font-size: 11px; opacity: 0.9;">🔒</span>
+              </button>
+              <button class="btn btn-outline" style="padding: 7px 12px; font-size: 12.5px;" onclick="downloadCSV('nominations_next')" title="Download Next Nominations (CSV)">⬇️ Download CSV</button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table id="nom-next-table">
+              <thead>
+                <tr>
+                  <th>Emp No</th>
+                  <th>Employee Name</th>
+                  <th>Designation</th>
+                  <th>Department</th>
+                  <th>Nominated Course</th>
+                  <th>Target Batch</th>
+                  <th>Mobile / Contact</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. CERTIFICATE ELIGIBILITY VIEW -->
+      <section id="view-certificates" class="page-view" style="display: none;">
+        <div class="kpi-grid">
+          <div class="kpi-card green">
+            <div class="kpi-icon-badge green">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Certificate Eligible Staff</div>
+              <div class="kpi-value" id="cert-eligible-count">111</div>
+              <div class="kpi-sub" style="color:var(--success);">Verified Attendance ≥ 80%</div>
+            </div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-icon-badge blue">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Minimum Requirement</div>
+              <div class="kpi-value">≥ 80%</div>
+              <div class="kpi-sub">Mandatory completion criteria</div>
+            </div>
+          </div>
+          <div class="kpi-card purple">
+            <div class="kpi-icon-badge purple">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">100% Full Attendance</div>
+              <div class="kpi-value" id="cert-distinction-count">85</div>
+              <div class="kpi-sub kpi-sub-purple">High Distinction Candidates</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 240px;">
+              <label class="form-label">Filter by Course</label>
+              <select id="cert-course-filter" class="input-field" onchange="renderCertificateEligibility()">
+                <option value="All Courses">All Courses</option>
+              </select>
+            </div>
+            <div style="flex: 1.5; min-width: 260px;">
+              <label class="form-label">Search Qualified Staff</label>
+              <input type="text" id="cert-search-input" class="input-field" placeholder="Search by employee name, ID or department..." oninput="renderCertificateEligibility()">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">🎓 KW&SC Course Certificate Eligibility Portal</div>
+              <div class="panel-sub">Verified list of candidates who have successfully attended 80% or more sessions and qualify for certificates</div>
+            </div>
+            <button class="btn btn-primary" onclick="downloadCSV('certificates')" title="Download Certificate List (CSV)">⬇️ Download Certificate List (CSV)</button>
+          </div>
+          <div class="table-container">
+            <table id="cert-eligible-table">
+              <thead>
+                <tr>
+                  <th>Emp No</th>
+                  <th>Employee Name</th>
+                  <th>Designation</th>
+                  <th>Department</th>
+                  <th>Course</th>
+                  <th>Batch</th>
+                  <th>Sessions Attended</th>
+                  <th>Attendance Rate</th>
+                  <th>Certificate Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. DATA MANAGEMENT VIEW -->
+      <section id="view-data_management" class="page-view" style="display: none;">
+        <div id="dm-locked-content" class="panel" style="max-width: 520px; margin: 40px auto; text-align: center; padding: 42px 36px;">
+          <div style="font-size: 48px; margin-bottom: 10px;">🔒</div>
+          <h2 style="color: var(--navy); font-size: 24px; font-weight: 800; margin-bottom: 8px;">Administrator Access Required</h2>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px; line-height: 1.5;">Please enter the administrator password to access dataset updates, uploads, and attendance synchronization.</p>
+          <div class="form-group" style="max-width: 320px; margin: 0 auto 16px;">
+            <input type="password" id="dm-password-input" class="input-field" placeholder="Enter password..." autocomplete="new-password" onkeydown="if(event.key==='Enter') unlockAdmin()">
+          </div>
+          <button class="btn btn-primary" style="width: 220px;" onclick="unlockAdmin()">Unlock Access</button>
+        </div>
+
+        <div id="dm-unlocked-content" style="display: none;">
+          <!-- Admin Hero Header -->
+          <div class="admin-hero-banner">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+              <div>
+                <div style="font-size: 18px; font-weight: 800;">🔓 Data Management Controls Unlocked</div>
+                <div style="font-size: 12.5px; opacity: 0.9; margin-top: 2px;">Update attendance records, link Google Sheets, or upload new batch enrollments directly.</div>
+              </div>
+              <button class="btn btn-danger" onclick="lockAdmin()">🔒 Lock Controls</button>
+            </div>
+          </div>
+
+          <!-- Google Sheets Live Sync with Step-by-Step Guidance -->
+          <div class="panel" style="margin-bottom: 24px;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">🔗 Google Sheets — Live Attendance Integration</div>
+                <div class="panel-sub">Synchronize attendance dynamically from any viewable Google Spreadsheet</div>
+              </div>
+            </div>
+
+            <div class="help-banner">
+              <b>💡 How to avoid linking errors:</b>
+              <ol style="margin-left: 18px; margin-top: 6px;">
+                <li>Open your Google Sheet and click the blue <b>Share</b> button in the top-right corner.</li>
+                <li>Under <b>General access</b>, change <i>"Restricted"</i> to <b>"Anyone with the link can view"</b> (Viewer).</li>
+                <li>Copy that link and paste it below. (Or use <b>File &gt; Share &gt; Publish to web</b>).</li>
+                <li>Any column names like <i>Name, Status, Date, Course</i> are automatically detected and mapped!</li>
+              </ol>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 14px;">
+              <div>
+                <label class="form-label">Google Sheet URL</label>
+                <input type="text" id="gs-url-input" class="input-field" placeholder="https://docs.google.com/spreadsheets/d/.../edit?usp=sharing">
+              </div>
+              <div>
+                <label class="form-label">Worksheet / Tab Name (Optional)</label>
+                <input type="text" id="gs-sheet-input" class="input-field" placeholder="e.g. Sheet1 or Attendance (leave blank for first tab)">
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn btn-primary" id="btn-sync-gs" onclick="syncGoogleSheets()">🔄 Sync Attendance Now</button>
+              <button class="btn btn-outline" onclick="disconnectGoogleSheets()">Disconnect Sheet</button>
+            </div>
+            
+            <div id="gs-error-box" style="display:none; margin-top:14px; padding:12px 16px; border-radius:10px; background:#fff1f1; border:1.5px solid #f87171; color:#991b1b; font-size:12.5px; line-height:1.5;"></div>
+          </div>
+
+          <!-- File Uploads -->
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">📥 Upload &amp; Update Datasets Locally</div>
+                <div class="panel-sub">Upload an Excel (.xlsx) or CSV file directly to update any dataset instantly</div>
+              </div>
+            </div>
+            <div class="upload-grid">
+              <div class="upload-card">
+                <div class="upload-title">✅ Attendance</div>
+                <div class="upload-hint">Upload attendance.xlsx or .csv directly</div>
+                <input type="file" id="file-att" accept=".xlsx,.xls,.csv" style="display: none;" onchange="uploadDataset('attendance', this)">
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                  <button class="btn btn-primary" onclick="document.getElementById('file-att').click()">Upload Attendance</button>
+                  <button class="btn btn-outline" style="font-size:12px; padding:6px 10px;" onclick="downloadCSV('attendance')" title="Download CSV (Password Protected)">⬇️ Download CSV</button>
+                </div>
+              </div>
+
+              <div class="upload-card">
+                <div class="upload-title">👥 Nominations</div>
+                <div class="upload-hint">Upload nominations.xlsx or .csv</div>
+                <input type="file" id="file-nom" accept=".xlsx,.xls,.csv" style="display: none;" onchange="uploadDataset('nominations', this)">
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                  <button class="btn btn-primary" onclick="document.getElementById('file-nom').click()">Upload Nominations</button>
+                  <button class="btn btn-outline" style="font-size:12px; padding:6px 10px;" onclick="downloadCSV('nominations')" title="Download CSV (Password Protected)">⬇️ Download CSV</button>
+                </div>
+              </div>
+
+              <div class="upload-card">
+                <div class="upload-title">📚 Courses</div>
+                <div class="upload-hint">Upload courses.xlsx or .csv</div>
+                <input type="file" id="file-crs" accept=".xlsx,.xls,.csv" style="display: none;" onchange="uploadDataset('courses', this)">
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                  <button class="btn btn-primary" onclick="document.getElementById('file-crs').click()">Upload Courses</button>
+                  <button class="btn btn-outline" style="font-size:12px; padding:6px 10px;" onclick="downloadCSV('courses')" title="Download CSV (Password Protected)">⬇️ Download CSV</button>
+                </div>
+              </div>
+
+              <div class="upload-card">
+                <div class="upload-title">📅 Training Schedule</div>
+                <div class="upload-hint">Upload schedule.xlsx or .csv</div>
+                <input type="file" id="file-sch" accept=".xlsx,.xls,.csv" style="display: none;" onchange="uploadDataset('schedule', this)">
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                  <button class="btn btn-primary" onclick="document.getElementById('file-sch').click()">Upload Schedule</button>
+                  <button class="btn btn-outline" style="font-size:12px; padding:6px 10px;" onclick="downloadCSV('schedule')" title="Download CSV (Password Protected)">⬇️ Download CSV</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Synced Google Sheets Attendance Data Table -->
+          <div class="panel" style="margin-top: 24px; border: 1.5px solid #bce0fd;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title" style="display:flex; align-items:center; gap:8px;">
+                  <span>📋 Live Synchronized Google Sheets Attendance Records</span>
+                  <span id="dm-synced-badge" class="pill present">Connected</span>
+                </div>
+                <div class="panel-sub" id="dm-synced-sub">Real-time attendance submissions connected to your Google Sheet</div>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button class="btn btn-primary" onclick="syncGoogleSheets()">🔄 Refresh from Google Sheet</button>
+                <a href="javascript:void(0)" onclick="downloadCSV('attendance')" class="btn btn-outline">⬇️ Download CSV</a>
+              </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div style="display:flex; gap:16px; margin-bottom:12px; align-items:center; flex-wrap:wrap;">
+              <input type="text" id="dm-search-input" class="input-field" style="margin-top:0; max-width:380px;" placeholder="Search synced records by name, ID, or course..." oninput="filterDataManagementTable(this.value)">
+              <div style="font-size:12px; color:var(--text-muted); font-weight:700;" id="dm-synced-count">Showing records</div>
+            </div>
+
+            <div class="table-container" style="max-height: 480px;">
+              <table id="dm-attendance-table">
+                <thead>
+                  <tr>
+                    <th>Emp ID</th>
+                    <th>Employee Name</th>
+                    <th>Designation</th>
+                    <th>Course / Training Module</th>
+                    <th>Date</th>
+                    <th>Attendance</th>
+                    <th>Comments / Remarks</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Modal for Courses Overview & Status (Triggered by clicking Total Courses KPI) -->
+  <div class="modal-backdrop" id="courses-status-modal">
+    <div class="modal-box" style="max-width: 680px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="modal-icon" style="margin: 0; font-size: 26px;">📚</div>
+          <div>
+            <div class="modal-title" style="text-align: left; margin: 0; font-size: 18px;">KW&SC Courses Overview &amp; Status</div>
+            <div class="modal-sub" style="text-align: left; margin: 2px 0 0;">Active training modules and instructor assignments</div>
+          </div>
+        </div>
+        <button class="modal-close-cross" onclick="closeCoursesStatusModal()" title="Close">✕</button>
+      </div>
+
+      <div class="table-container" style="max-height: 380px;">
+        <table id="courses-status-table">
+          <thead>
+            <tr>
+              <th>Course Name</th>
+              <th>Category</th>
+              <th>Trainer</th>
+              <th>Total Batches</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+        <button class="btn btn-outline" onclick="closeCoursesStatusModal()">Close</button>
+        <button class="btn btn-primary" onclick="closeCoursesStatusModal(); switchPage('schedule');">View Full Schedule</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for password unlock -->
+  <div class="modal-backdrop" id="unlock-modal">
+    <div class="modal-box">
+      <div class="modal-icon">🔒</div>
+      <div class="modal-title">Unlock Data Management</div>
+      <div class="modal-sub">Enter the administrator password to access data management tools.</div>
+      <div class="form-group">
+        <input type="password" id="modal-password" class="input-field" placeholder="Enter password..." autocomplete="new-password" onkeydown="if(event.key==='Enter') submitModalUnlock()">
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 14px;">
+        <button class="btn btn-outline" onclick="closeUnlockModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitModalUnlock()">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Download Password Authorization -->
+  <div class="modal-backdrop" id="download-auth-modal">
+    <div class="modal-box download-modal-box">
+      <div class="modal-header-badge">
+        <div class="lock-circle-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <button class="modal-close-cross" onclick="closeDownloadModal()" title="Close">✕</button>
+      </div>
+      
+      <div class="download-modal-title">🔐 Download Authorization Required</div>
+      <div class="download-modal-sub">This dataset is restricted. Please enter the authorized download password to export this file.</div>
+      
+      <div class="modal-file-target">
+        <span>📄</span>
+        <span id="download-target-name">kwsc_dataset.csv</span>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="download-pass-wrap">
+          <input type="password" id="download-password-input" class="download-pass-input" placeholder="Enter download password..." autocomplete="new-password" onkeydown="if(event.key==='Enter') submitDownloadPassword()">
+          <button type="button" class="download-eye-toggle" onclick="toggleDownloadPasswordVisibility()" title="Show/Hide Password">
+            <svg id="download-eye-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        <div id="download-error-msg" class="download-error-text" style="display:none;"></div>
+      </div>
+
+      <div class="modal-btn-row">
+        <button class="btn btn-outline" onclick="closeDownloadModal()">Cancel</button>
+        <button class="btn btn-primary btn-download-confirm" onclick="submitDownloadPassword()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Unlock &amp; Download</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Next Class Nominations Data Management Password Authentication -->
+  <div class="modal-backdrop" id="next-nom-auth-modal">
+    <div class="modal-box download-modal-box">
+      <div class="modal-header-badge">
+        <div class="lock-circle-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <button class="modal-close-cross" onclick="closeNextNomAuthModal()" title="Close">✕</button>
+      </div>
+      
+      <div class="download-modal-title">🔐 Data Management Password Required</div>
+      <div class="download-modal-sub">Uploading nomination spreadsheets or connecting live Google Sheets requires the Data Management administrator password.</div>
+      
+      <div class="modal-file-target">
+        <span>📊</span>
+        <span>Next Class Nominations (2nd Batch)</span>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="download-pass-wrap">
+          <input type="password" id="next-nom-auth-password" class="download-pass-input" placeholder="Enter administrator password..." autocomplete="new-password" onkeydown="if(event.key==='Enter') submitNextNomAuth()">
+          <button type="button" class="download-eye-toggle" onclick="toggleNextNomAuthPasswordVisibility()" title="Show/Hide Password">
+            <svg id="next-nom-eye-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        <div id="next-nom-auth-error" class="download-error-text" style="display:none;"></div>
+      </div>
+
+      <div class="modal-btn-row">
+        <button class="btn btn-outline" onclick="closeNextNomAuthModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitNextNomAuth()">
+          <span>Unlock &amp; Proceed</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Next Class Nominations Spreadsheet Upload & Live Google Sheet Sync -->
+  <div class="modal-backdrop" id="next-nom-spreadsheet-modal">
+    <div class="modal-box" style="max-width: 620px; text-align: left; padding: 26px 30px;">
+      <div class="modal-header-badge">
+        <div class="lock-circle-icon" style="background:#e0f2fe; border-color:#7dd3fc; color:#0284c7;">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <button class="modal-close-cross" onclick="closeNextNomSpreadsheetModal()" title="Close">✕</button>
+      </div>
+
+      <div class="download-modal-title" style="font-size:19px;">📊 Manage Next Class Nominations Spreadsheet</div>
+      <div class="download-modal-sub" style="margin-bottom:18px;">
+        Connect a live Google Spreadsheet to automatically display real-time nominations on this dashboard, or upload an Excel (.xlsx) / CSV file directly.
+      </div>
+
+      <!-- Modal Tabs Navigation -->
+      <div class="nom-tab-nav" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px;">
+        <button type="button" class="nom-tab-btn active" id="tab-btn-next-gs" onclick="switchNextNomModalTab('gs')">
+          🔗 Live Google Spreadsheet
+        </button>
+        <button type="button" class="nom-tab-btn" id="tab-btn-next-file" onclick="switchNextNomModalTab('file')">
+          📤 Upload Excel / CSV File
+        </button>
+      </div>
+
+      <!-- Tab 1: Live Google Sheet Connection -->
+      <div id="tab-content-next-gs" class="nom-tab-pane">
+        <div class="help-banner" style="margin-bottom: 16px; font-size: 12px;">
+          <b>💡 How to show live nominations on this dashboard:</b>
+          <ol style="margin-left: 18px; margin-top: 6px; line-height: 1.5;">
+            <li>In your Google Sheet, click <b>Share</b> (top-right corner).</li>
+            <li>Change General Access from <i>"Restricted"</i> to <b>"Anyone with the link can view"</b> (Viewer).</li>
+            <li>Paste the URL below and click <b>Connect &amp; Sync Live</b>.</li>
+            <li>Nominations will update live on the dashboard with full details!</li>
+          </ol>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" style="font-weight: 700;">Google Spreadsheet URL</label>
+          <input type="text" id="next-nom-gs-url" class="input-field" placeholder="https://docs.google.com/spreadsheets/d/.../edit?usp=sharing">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">Worksheet / Tab Name (Optional)</label>
+          <input type="text" id="next-nom-gs-sheet" class="input-field" placeholder="e.g. 2nd Batch or Nominations (leave blank for first tab)">
+        </div>
+
+        <!-- Live Status Bar -->
+        <div id="next-nom-live-status-bar" style="display:none; padding:10px 14px; border-radius:8px; background:#f0fdf4; border:1px solid #bbf7d0; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:12px; color:#166534;">
+              <span style="font-weight:800;">🟢 Live Link Active:</span>
+              <span id="next-nom-live-status-url" style="word-break:break-all; font-family:monospace;"></span>
+            </div>
+            <div style="font-size:11px; color:#15803d;" id="next-nom-live-status-time"></div>
+          </div>
+        </div>
+
+        <div id="next-nom-gs-error" style="display:none; margin-bottom:14px; padding:10px 14px; border-radius:8px; background:#fef2f2; border:1px solid #fecaca; color:#991b1b; font-size:12px; line-height:1.45;"></div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-primary" id="btn-sync-next-gs" onclick="syncNextNomGoogleSheet(false)">
+            🔄 Connect &amp; Sync Live Nominations
+          </button>
+          <button type="button" class="btn btn-outline" id="btn-disconnect-next-gs" style="display:none;" onclick="disconnectNextNomGoogleSheet()">
+            Disconnect Sheet
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Upload Excel / CSV File -->
+      <div id="tab-content-next-file" class="nom-tab-pane" style="display: none;">
+        <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 28px 20px; text-align: center; background: #f8fafc; transition: all 0.2s;" id="next-nom-dropzone">
+          <div style="font-size: 38px; margin-bottom: 8px;">📂</div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 4px;">Upload Spreadsheet File</div>
+          <div style="font-size: 12px; color: #64748b; margin-bottom: 16px; line-height: 1.45;">
+            Upload an Excel (.xlsx, .xls) or CSV file containing 2nd batch nominees.<br>
+            Columns like <i>Employee No, Name, Designation, Department, Course</i> are automatically detected.
+          </div>
+          <input type="file" id="next-nom-file-input" accept=".xlsx,.xls,.csv" style="display: none;" onchange="uploadNextNomFile(this)">
+          <button type="button" class="btn btn-primary" onclick="document.getElementById('next-nom-file-input').click()">
+            Browse &amp; Upload Spreadsheet
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-btn-row" style="margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
+        <button class="btn btn-outline" onclick="closeNextNomSpreadsheetModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Initial Fallback Data & Client-side Application Logic -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
