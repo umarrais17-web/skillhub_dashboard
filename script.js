@@ -30,9 +30,9 @@ let appState = {
 };
 
 // Unified Access Password for all Dashboard controls
-const UNIFIED_PASSWORD = "kwsc1001";
-const PASSWORD_HASH = "d6bc9734f3fbe46a53ccbe68793893d8d4710164ba1c8f33f2c0a9c573d164c1";
-const VALID_PASSWORDS = new Set(["kwsc1001"]);
+const UNIFIED_PASSWORD = "kwsc1010";
+const PASSWORD_HASH = "d51d8ead4b1fe74f2e0e2e8482c9aab64b6a2fe13ca2d6e0bd3dbbcd6fa5de5e";
+const VALID_PASSWORDS = new Set(["kwsc1010"]);
 
 function isUnifiedAuthorized(pwd) {
   return String(pwd || '').trim().toLowerCase() === UNIFIED_PASSWORD.toLowerCase();
@@ -1998,7 +1998,7 @@ function uploadDataset(type, inputElem) {
 // CLIENT-SIDE CSV EXPORT WITH UNIFIED PASSWORD PROTECTION
 // ============================================================
 
-const DOWNLOAD_AUTH_PASSWORD = "kwsc1001";
+const DOWNLOAD_AUTH_PASSWORD = "kwsc1010";
 let pendingDownloadType = null;
 let pendingDownloadCustomData = null;
 
