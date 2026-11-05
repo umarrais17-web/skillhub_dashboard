@@ -192,7 +192,7 @@
                 <span class="kpi-click-hint">View portal ↗</span>
               </div>
               <div class="kpi-value" id="kpi-cert-eligible">111</div>
-              <div class="kpi-sub" style="color:#16a34a;">Qualified (≥ 8/10 Classes)</div>
+              <div class="kpi-sub" style="color:#16a34a;">Qualified (≥ 10/12 Classes)</div>
             </div>
           </div>
         </div>
@@ -335,6 +335,7 @@
                     <th>Batch</th>
                     <th>Time</th>
                     <th>Capacity</th>
+                    <th>Batch Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -564,6 +565,8 @@
                   <th class="sortable-th" onclick="sortTable('full-schedule-table', 2)">Batch <span class="sort-icon">↕</span></th>
                   <th class="sortable-th" onclick="sortTable('full-schedule-table', 3)">Time <span class="sort-icon">↕</span></th>
                   <th class="sortable-th" onclick="sortTable('full-schedule-table', 4)">Capacity <span class="sort-icon">↕</span></th>
+                  <th class="sortable-th" onclick="sortTable('full-schedule-table', 5)">Classes (Total 12) <span class="sort-icon">↕</span></th>
+                  <th class="sortable-th" onclick="sortTable('full-schedule-table', 6)">Batch Status <span class="sort-icon">↕</span></th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -927,7 +930,7 @@
             <div class="kpi-content">
               <div class="kpi-label">Certificate Eligible Staff</div>
               <div class="kpi-value" id="cert-eligible-count">111</div>
-              <div class="kpi-sub" style="color:var(--success);">Attended ≥ 8 of 10 Classes</div>
+              <div class="kpi-sub" style="color:var(--success);">Attended ≥ 10 of 12 Classes</div>
             </div>
           </div>
           <div class="kpi-card blue">
@@ -936,7 +939,7 @@
             </div>
             <div class="kpi-content">
               <div class="kpi-label">Minimum Requirement</div>
-              <div class="kpi-value">8 / 10 Classes</div>
+              <div class="kpi-value">10 / 12 Classes</div>
               <div class="kpi-sub">80% mandatory completion criteria</div>
             </div>
           </div>
@@ -947,7 +950,7 @@
             <div class="kpi-content">
               <div class="kpi-label">100% Full Attendance</div>
               <div class="kpi-value" id="cert-distinction-count">85</div>
-              <div class="kpi-sub kpi-sub-purple">10 of 10 Classes Attended</div>
+              <div class="kpi-sub kpi-sub-purple">12 of 12 Classes (Batch Closed)</div>
             </div>
           </div>
         </div>
@@ -971,7 +974,7 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">🎓 KW&SC Course Certificate Eligibility Portal</div>
-              <div class="panel-sub">Verified list of candidates who attended 8 or more classes out of 10 (≥ 80%) and qualify for official certification</div>
+              <div class="panel-sub">Verified list of candidates who attended 10 or more classes out of 12 (≥ 80%) and qualify for official certification. Batches close automatically after completing 12 classes.</div>
             </div>
             <button class="btn btn-primary" onclick="downloadCSV('certificates')" title="Download Certificate List (CSV)">⬇️ Download Certificate List (CSV)</button>
           </div>
@@ -985,9 +988,9 @@
                   <th class="sortable-th" onclick="sortTable('cert-eligible-table', 3)">Department <span class="sort-icon">↕</span></th>
                   <th class="sortable-th" onclick="sortTable('cert-eligible-table', 4)">Course <span class="sort-icon">↕</span></th>
                   <th class="sortable-th" onclick="sortTable('cert-eligible-table', 5)">Batch <span class="sort-icon">↕</span></th>
-                  <th class="sortable-th" onclick="sortTable('cert-eligible-table', 6)">Classes Attended <span class="sort-icon">↕</span></th>
+                  <th class="sortable-th" onclick="sortTable('cert-eligible-table', 6)">Classes Attended (Out of 12) <span class="sort-icon">↕</span></th>
                   <th class="sortable-th" onclick="sortTable('cert-eligible-table', 7)">Rate <span class="sort-icon">↕</span></th>
-                  <th class="sortable-th" onclick="sortTable('cert-eligible-table', 8)">Status <span class="sort-icon">↕</span></th>
+                  <th class="sortable-th" onclick="sortTable('cert-eligible-table', 8)">Batch &amp; Eligibility Status <span class="sort-icon">↕</span></th>
                   <th style="text-align:center;">Certificate</th>
                 </tr>
               </thead>
@@ -1179,6 +1182,8 @@
               <th>Category</th>
               <th>Trainer</th>
               <th>Total Batches</th>
+              <th>Course Duration</th>
+              <th>Batch Policy</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -1437,7 +1442,7 @@
           conducted under the KW&amp;SC Central Skill Development Initiative at Staff Training Centre, Karachi.
           <br>
           <div class="cert-attendance-badge" id="cert-attendance-stats">
-            <span>✓ Verified Attendance: 9 / 10 Sessions Completed (90% Attendance Rate)</span>
+            <span>✓ Verified Attendance: 12 / 12 Sessions Completed (100% Attendance Rate) • Batch Closed</span>
           </div>
         </div>
 
